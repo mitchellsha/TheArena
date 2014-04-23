@@ -5,18 +5,19 @@ import com.threed.jpct.Matrix;
 import com.threed.jpct.Object3D;
 import com.threed.jpct.SimpleVector;
 
+@SuppressWarnings("serial")
 public class ArenaRearWalls extends Object3D {
 	
 	public ArenaRearWalls(){
-		super(loadModel("Models/finalized/backwallsB2.3ds", 1));		
-		this.setAdditionalColor(0,100,100);
-		this.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
+		this("src/Models/finalized/backwallsThin.3ds", 1);
 	}
 	
 	public ArenaRearWalls(String path, int scale){
 		super(loadModel(path, scale));		
-		this.setAdditionalColor(0,100,100);
-		this.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
+		setAdditionalColor(0,100,100);
+		setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
+		setTransparency(-100);
+		build();
 	}
 	
     private static Object3D loadModel(String filename, float scale) {

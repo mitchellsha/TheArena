@@ -5,19 +5,21 @@ import com.threed.jpct.Matrix;
 import com.threed.jpct.Object3D;
 import com.threed.jpct.SimpleVector;
 
+@SuppressWarnings("serial")
 public class ArenaInvisibleWalls extends Object3D {
 	
 	public ArenaInvisibleWalls(){
-		super(loadModel("Models/finalized/invisibleWalls.3ds", 1));
-		this.setAdditionalColor(0,100,100);
-		this.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
+		this("src/Models/finalized/invisibleWallsThin.3ds", 1);
 	}
 	
 	public ArenaInvisibleWalls(String path, int scale){
 		super(loadModel(path, scale));		
-		this.setAdditionalColor(0,100,100);
-		this.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
+		setAdditionalColor(0,0,100);
+		setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
+		setTransparency(0);
+		build();
 	}
+	
     private static Object3D loadModel(String filename, float scale) {
         Object3D[] model = Loader.load3DS(filename, scale);
         Object3D o3d = new Object3D(0);

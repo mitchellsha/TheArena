@@ -9,30 +9,22 @@ public class playspace {
 		
 //		TextureManager.getInstance().addTexture("box", new Texture("box.jpg"));
 		
-		Object3D walls = loadModel("Models/finalized/backwallsThin.3ds", 1);
-		walls.setAdditionalColor(0,100,100);
-		walls.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
-		walls.setTransparency(-100);
-		walls.build();
-		world.addObject(walls);
+		Object3D rearWalls = new ArenaRearWalls();
+		world.addObject(rearWalls);
 
-		Object3D invisibleWalls = loadModel("Models/finalized/invisibleWallsThin.3ds", 1);
-		invisibleWalls.setAdditionalColor(0,0,100);
-		walls.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
-		invisibleWalls.setTransparency(0);
-		invisibleWalls.build();
+		Object3D invisibleWalls = new ArenaInvisibleWalls();
 		world.addObject(invisibleWalls);
 
 //		world.getCamera().setPosition(20, -15, -15);
 		world.getCamera().setPosition(22, -11, -17);
-		world.getCamera().lookAt(walls.getTransformedCenter());
+		world.getCamera().lookAt(rearWalls.getTransformedCenter());
 
 		FrameBuffer buffer = new FrameBuffer(800, 600, FrameBuffer.SAMPLINGMODE_NORMAL);
 		buffer.disableRenderer(IRenderer.RENDERER_SOFTWARE);
 		buffer.enableRenderer(IRenderer.RENDERER_OPENGL);
 		
 		while (!org.lwjgl.opengl.Display.isCloseRequested()) {
-//	        wall1.rotateY(0.01f);
+//			rearWalls.rotateY(0.01f);
 	        buffer.clear(java.awt.Color.BLUE);
 	        world.renderScene(buffer);
 	        world.draw(buffer);
