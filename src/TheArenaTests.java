@@ -3,14 +3,15 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import shapes.Ball;
+
 import com.threed.jpct.SimpleVector;
 
-import Shape.Ball;
-import environment.playspace;
+import environment.Playspace;
 
 public class TheArenaTests
 {
-	private playspace arena;
+	private Playspace arena;
 	private Ball ball;
 	
 	@Before
@@ -18,6 +19,7 @@ public class TheArenaTests
 	{
 		ball = new Ball(new SimpleVector(), 20, 10, 10, 10, 10);
 		ball.build();
+		arena = new Playspace();
 	}
 	
 	@Test
