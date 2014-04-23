@@ -5,24 +5,26 @@ public class playspace {
 	
 	public playspace() throws InterruptedException{
 		World world = new World();
-		world.setAmbientLight(0, 255, 0);
+		world.setAmbientLight(0, 100, 100);
 		
 //		TextureManager.getInstance().addTexture("box", new Texture("box.jpg"));
-		Object3D walls = loadModel("src/Models/finalized/backwalls.3ds", 1);
+		
+		Object3D walls = loadModel("Models/finalized/backwallsThin.3ds", 1);
+		walls.setAdditionalColor(0,100,100);
+		walls.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
+		walls.setTransparency(-100);
 		walls.build();
 		world.addObject(walls);
-//		Object3D wall1 = Primitives.getBox(5f,5f);
-//		wall1.build();
-//		world.addObject(wall1);
-//		wall1.setTexture("box");
-//		wall1.setEnvmapped(Object3D.ENVMAP_ENABLED);
 
-		
-//		Object3D wall2 = Primitives.getBox(5f, 5f);
-//		box.setTexture("box");
-//		box.setEnvmapped(Object3D.ENVMAP_ENABLED);
+		Object3D invisibleWalls = loadModel("Models/finalized/invisibleWallsThin.3ds", 1);
+		invisibleWalls.setAdditionalColor(0,0,100);
+		walls.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
+		invisibleWalls.setTransparency(0);
+		invisibleWalls.build();
+		world.addObject(invisibleWalls);
 
-		world.getCamera().setPosition(50, -50, -5);
+//		world.getCamera().setPosition(20, -15, -15);
+		world.getCamera().setPosition(22, -11, -17);
 		world.getCamera().lookAt(walls.getTransformedCenter());
 
 		FrameBuffer buffer = new FrameBuffer(800, 600, FrameBuffer.SAMPLINGMODE_NORMAL);

@@ -39,7 +39,7 @@ public class Ball extends Object3D implements CollisionListener{
 		velocityZ = speedZ*heading;
 		
 		myBall = Primitives.getSphere(resolution, scale);
-		
+
 	}
 	
 	public void collisionMove(){
