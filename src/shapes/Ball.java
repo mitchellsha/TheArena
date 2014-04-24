@@ -23,23 +23,31 @@ public class Ball extends Object3D implements CollisionListener{
 	float ballScale;
 	private double heading;
 	static Object3D myBall;
+	private float delta;
 
 	
-	public Ball(SimpleVector vector, int resolution, float scale, float size, float direciton, double weight){
+	public Ball(SimpleVector vector, World myWorld, int resolution, float scale, float direciton, int tickRate){
 		super(myBall);
 		ballScale = scale;
-		mass = weight;
 		ballVector = vector;
-		
-		radius = size;
+		world = myWorld;
 		heading = Math.toRadians(direciton);
 		
-		velocityX = speedX*heading;
-		velocityY = speedY*heading;
-		velocityZ = speedZ*heading;
+		speedX=0.1f;
+		speedY=0.1f;
+		speedZ=0.1f;
+		delta = tickRate*10000;
+//		velocityX = speedX*heading;
+//		velocityY = speedY*heading;
+//		velocityZ = speedZ*heading;
+		
+		velocityX = 0;
+		velocityY = 0;
+		velocityZ = 0;
 		
 		myBall = Primitives.getSphere(resolution, scale);
-
+		myBall.setOrigin(ballVector);
+		
 	}
 	
 	public void collisionMove(){
@@ -59,12 +67,31 @@ public class Ball extends Object3D implements CollisionListener{
 		}
 	}
 	
+	public Object3D getSphere(){
+		return myBall;
+	}
+	
 	public void gravMove(){
-		velocityZ -= g/2;
-		ballVector.x -= velocityX;
-		ballVector.y -= velocityY;
-		ballVector.z += velocityZ;
-		velocityZ -= g/2;
+		System.out.println("~~~~~~~~~~STARTING MOVE~~~~~~~~~~");
+
+		System.out.println("Vector X: "+ballVector.x+" Vector Y: " + ballVector.y+" Vector Z: "+ballVector.z);
+		System.out.println("Delta is: " + delta);
+		System.out.println("Starting Z velocity: "+velocityZ);
+		velocityY += g/(2*delta);
+		System.out.println("velocity we are adding to Z is: " + (g/(2*delta))*2);
+		ballVector.x -= velocityX/delta;
+		ballVector.y += velocityY/delta;
+		ballVector.z -= velocityZ/delta;
+		velocityY += g/(2*delta);
+		System.out.println("Vector X: "+ballVector.x+" Vector Y: " + ballVector.y+" Vector Z: "+ballVector.z);
+		System.out.println("Ending Z velocity: "+velocityZ);
+		System.out.println("~~~~~~~~~~FINISHED MOVE~~~~~~~~~~");
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+
+		myBall.translate(ballVector);
 	}
 	
 	public float flipSign(float num){
@@ -79,6 +106,7 @@ public class Ball extends Object3D implements CollisionListener{
 	public void draw(Graphics g){
 		//going to have to change this to 3D?
 		g.fillOval((int) ballVector.x,(int) ballVector.y,(int) radius/2,(int) radius/2);
+		
 	}
 
 	@Override

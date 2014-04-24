@@ -3,7 +3,7 @@ package environment;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class cameraListener implements KeyListener {
+public class CameraListener implements KeyListener {
 	
 	Integer l = 1;
 	

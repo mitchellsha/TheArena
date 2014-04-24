@@ -1,5 +1,6 @@
 package environment;
 import com.threed.jpct.*;
+import shapes.Character;
 
 public class Playspace {
 	
@@ -14,6 +15,9 @@ public class Playspace {
 
 		Object3D invisibleWalls = new ArenaInvisibleWalls();
 		world.addObject(invisibleWalls);
+		
+		Object3D character = new Character();
+		world.addObject(character);
 
 //		world.getCamera().setPosition(20, -15, -15);
 		world.getCamera().setPosition(22, -11, -17);
