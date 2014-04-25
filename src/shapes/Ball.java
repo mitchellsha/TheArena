@@ -82,7 +82,7 @@ public class Ball extends Object3D implements CollisionListener{
 //			System.out.println("INSIDE X");
 			if(countx==0){
 				velocityX = -velocityX;
-				System.out.println("flipped X velocity");
+//				System.out.println("flipped X velocity");
 				countx++;
 				county=0;
 				countz=0;
@@ -90,13 +90,13 @@ public class Ball extends Object3D implements CollisionListener{
 			else{
 				ballVector.x += -velocityX*2;
 				velocityX = -velocityX;
-				System.out.println("tried to reset x vector");
+//				System.out.println("tried to reset x vector");
 			}
 		} else if(BOTTOM-offSet < ballVector.y && ballVector.y < BOTTOM+offSet ){
 //			System.out.println("INSIDE Y");
 			if(county==0){
 				velocityY = -velocityY;
-				System.out.println("flipped y velocity");
+//				System.out.println("flipped y velocity");
 				county++;
 				countx = 0;
 				countz = 0;
@@ -104,14 +104,14 @@ public class Ball extends Object3D implements CollisionListener{
 			else{
 				ballVector.y += -velocityY*2;
 				velocityY = -velocityY;
-				System.out.println("tried to reset y vector");
+//				System.out.println("tried to reset y vector");
 
 			}
 		} else if(CLOSE-offSet < ballVector.z && ballVector.z < (CLOSE+offSet) || FAR-offSet < ballVector.z && ballVector.z < FAR+offSet){
 //			System.out.println("INSIDE Z");
 			if(countz==0){
 				velocityZ = -velocityZ;
-				System.out.println("flipped z velocity");
+//				System.out.println("flipped z velocity");
 				countz++;
 				county=0;
 				countx=0;
@@ -119,7 +119,7 @@ public class Ball extends Object3D implements CollisionListener{
 			else{
 				ballVector.z += -velocityZ*2;
 				velocityZ = -velocityZ;
-				System.out.println("tried to reset z vector");
+//				System.out.println("tried to reset z vector");
 
 			}
 		}

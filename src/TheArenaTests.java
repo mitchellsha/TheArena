@@ -50,6 +50,7 @@ public class TheArenaTests
 		SimpleVector afterVector = ball.gravMove();
 		assertNotEquals(startVector, afterVector);
 		assertEquals(afterVector, ball.getVector());
+		assertFalse(afterVector == ball.getVector());
 		afterVector = ball.getVector();
 		assertNotEquals(startVector, afterVector);
 		assertFalse(afterVector == ball.getVector());
