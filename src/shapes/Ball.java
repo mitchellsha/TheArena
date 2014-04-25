@@ -23,27 +23,26 @@ public class Ball extends Object3D implements CollisionListener{
 	float ballScale;
 	private double heading;
 	static Object3D myBall;
-	private float delta;
+	private double delta;
 
 	
-	public Ball(SimpleVector vector, World myWorld, int resolution, float scale, float direciton, int tickRate){
+	public Ball(SimpleVector vector, World myWorld, int resolution, float scale, int tickRate, double vx, double vy, double vz){
 		super(myBall);
 		ballScale = scale;
 		ballVector = vector;
 		world = myWorld;
-		heading = Math.toRadians(direciton);
 		
 		speedX=0.1f;
 		speedY=0.1f;
 		speedZ=0.1f;
-		delta = tickRate*10000;
+		delta = (tickRate*5)/tickRate;
 //		velocityX = speedX*heading;
 //		velocityY = speedY*heading;
 //		velocityZ = speedZ*heading;
 		
-		velocityX = 0;
-		velocityY = 0;
-		velocityZ = 0;
+		velocityX = vx;
+		velocityY = vy;
+		velocityZ = vz;
 		
 		myBall = Primitives.getSphere(resolution, scale);
 		myBall.setOrigin(ballVector);
@@ -71,12 +70,17 @@ public class Ball extends Object3D implements CollisionListener{
 		return myBall;
 	}
 	
+	public SimpleVector getVector(){
+		return ballVector;
+	}
+	
 	public void gravMove(){
 		System.out.println("~~~~~~~~~~STARTING MOVE~~~~~~~~~~");
-
+		SimpleVector prevVector = new SimpleVector(ballVector.x, ballVector.y, ballVector.z);
+		System.out.println(prevVector);
 		System.out.println("Vector X: "+ballVector.x+" Vector Y: " + ballVector.y+" Vector Z: "+ballVector.z);
 		System.out.println("Delta is: " + delta);
-		System.out.println("Starting Z velocity: "+velocityZ);
+		System.out.println("Starting y velocity: "+velocityY);
 		velocityY += g/(2*delta);
 		System.out.println("velocity we are adding to Z is: " + (g/(2*delta))*2);
 		ballVector.x -= velocityX/delta;
@@ -84,14 +88,17 @@ public class Ball extends Object3D implements CollisionListener{
 		ballVector.z -= velocityZ/delta;
 		velocityY += g/(2*delta);
 		System.out.println("Vector X: "+ballVector.x+" Vector Y: " + ballVector.y+" Vector Z: "+ballVector.z);
-		System.out.println("Ending Z velocity: "+velocityZ);
+		System.out.println("Ending y velocity: "+velocityY);
+		
+		//SimpleVector toTranslate = ballVector.calcSub(prevVector);
+		
+		myBall.translate(ballVector.calcSub(prevVector));
+		
 		System.out.println("~~~~~~~~~~FINISHED MOVE~~~~~~~~~~");
 		System.out.println();
 		System.out.println();
 		System.out.println();
 		System.out.println();
-
-		myBall.translate(ballVector);
 	}
 	
 	public float flipSign(float num){
