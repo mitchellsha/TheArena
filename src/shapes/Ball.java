@@ -29,13 +29,13 @@ public class Ball extends Object3D implements CollisionListener{
 	public Ball(SimpleVector vector, World myWorld, int resolution, float scale, int tickRate, double vx, double vy, double vz){
 		super(myBall);
 		ballScale = scale;
-		ballVector = vector;
+		ballVector = new SimpleVector(vector);
 		world = myWorld;
 		
 		speedX=0.1f;
 		speedY=0.1f;
 		speedZ=0.1f;
-		delta = (tickRate*5)/tickRate;
+		delta = 5; //So... delta always equals 5?
 //		velocityX = speedX*heading;
 //		velocityY = speedY*heading;
 //		velocityZ = speedZ*heading;
@@ -71,7 +71,7 @@ public class Ball extends Object3D implements CollisionListener{
 	}
 	
 	public SimpleVector getVector(){
-		return ballVector;
+		return new SimpleVector(ballVector);
 	}
 	
 	public void gravMove(){
@@ -81,12 +81,12 @@ public class Ball extends Object3D implements CollisionListener{
 		System.out.println("Vector X: "+ballVector.x+" Vector Y: " + ballVector.y+" Vector Z: "+ballVector.z);
 		System.out.println("Delta is: " + delta);
 		System.out.println("Starting y velocity: "+velocityY);
-		velocityY += g/(2*delta);
+		velocityY += g/10;
 		System.out.println("velocity we are adding to Z is: " + (g/(2*delta))*2);
 		ballVector.x -= velocityX/delta;
 		ballVector.y += velocityY/delta;
 		ballVector.z -= velocityZ/delta;
-		velocityY += g/(2*delta);
+		velocityY += g/10;
 		System.out.println("Vector X: "+ballVector.x+" Vector Y: " + ballVector.y+" Vector Z: "+ballVector.z);
 		System.out.println("Ending y velocity: "+velocityY);
 		
