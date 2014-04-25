@@ -5,106 +5,118 @@ import org.junit.Test;
 
 import shapes.Ball;
 
+import com.threed.jpct.Object3D;
+import com.threed.jpct.Primitives;
 import com.threed.jpct.SimpleVector;
 import com.threed.jpct.World;
 
 import environment.Playspace;
+import environment.Ticker;
 
 public class TheArenaTests
-{
+{	
+	private World world;
 	
 	@Before
 	public void setup()
 	{
-		
+		world = new World();
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Test
-	public void arenaTest()
+	public void tickerTest()
 	{
+		int rate = 10;
+		int ticks = 10;
+		Ticker ticker = new Ticker(rate);
+		long start = ticker.getTime();
+		long stop = ticker.getTime();
 		
+		while(stop-start < rate*ticks)
+			stop = ticker.getTime();
+		
+		assertTrue(ticker.getTicks() >= ticks);
 	}
 	
 	@Test
 	public void abstractionTest()
 	{
 		SimpleVector startVector = SimpleVector.ORIGIN;
-		Ball ball = new Ball(startVector, new World(), 1, 1, 1, 0, 0, 0);
+		Ball ball = new Ball(startVector, world, 1, 1, 1, 0, 0, 0);
+		world.addObject(ball.getSphere());
 		assertEquals(startVector, ball.getVector());
 		assertFalse(startVector == ball.getVector());
 		
-		ball.gravMove();
-		SimpleVector afterVector = ball.getVector();
+		SimpleVector afterVector = ball.gravMove();
+		assertNotEquals(startVector, afterVector);
+		assertEquals(afterVector, ball.getVector());
+		afterVector = ball.getVector();
 		assertNotEquals(startVector, afterVector);
 		assertFalse(afterVector == ball.getVector());
 		
-		ball.gravMove();
+		assertNotEquals(afterVector, ball.gravMove());
 		assertNotEquals(afterVector, ball.getVector());
 	}
 	
 	@Test
-	public void gravityTest()
+	public void ballGravityTest()
 	{
 		SimpleVector startVector = SimpleVector.ORIGIN;
-		double yVelo = -9.8/2;
-		Ball ball = new Ball(startVector, new World(), 1, 1, 1, 0, yVelo, 0);
-		System.out.println("Start: "+startVector);
-		System.out.println("velo: "+yVelo);
+		Ball ball = new Ball(startVector, world, 1, 1, 1, 0, 0, 0);
+		world.addObject(ball.getSphere());
 		
-		ball.gravMove();
-		SimpleVector curVector = ball.getVector();
-		System.out.println("Start: "+startVector+"\tCurrent:"+curVector);
-		assertNotEquals(startVector, curVector);
-		SimpleVector firstVector = new SimpleVector(curVector);
+		SimpleVector curVector = ball.gravMove();
+		assertNotEquals(curVector, startVector);
 		
-		ball.gravMove();
-		curVector = ball.getVector();
-		System.out.println("Start: "+startVector+"\tFirst:"+firstVector+"\tCurrent:"+curVector);
-		assertNotEquals(startVector, curVector);
-		SimpleVector secondVector = new SimpleVector(curVector);
+		float pastHeight = startVector.y;
+		float curHeight = curVector.y;
+		float curDist = curHeight - pastHeight;
+		float pastDist = curDist;
 		
-		ball.gravMove();
-		curVector = ball.getVector();
-		System.out.println("Start: "+startVector+"\tFirst:"+firstVector+"\tSecond: "+secondVector+"\tCurrent:"+curVector);
-		assertNotEquals(startVector, curVector);
-		assertEquals(secondVector, curVector);
+		curVector = ball.gravMove();
+		pastHeight = curHeight;
+		curHeight = curVector.y;
+		curDist = curHeight - pastHeight;
+		pastDist = curDist;
 		
-		ball.gravMove();
-		curVector = ball.getVector();
-		System.out.println("Start: "+startVector+"\tFirst:"+firstVector+"\tCurrent:"+curVector);
-		assertNotEquals(startVector, curVector);
-		assertEquals(firstVector, curVector);
+		assertTrue(pastHeight > curHeight);		//It seems that the y-axis is upside-down
+		assertTrue(curDist > pastDist);			//It seems that the y-axis is upside-down
 	}
 	
 	@Test
-	public void ballCollisionTest()
+	public void collisionTest()
 	{
-		World world = new World();
-		SimpleVector vector1 = new SimpleVector(30, 0, -40);
-		SimpleVector vector2 = new SimpleVector(-vector1.x, vector1.y, -vector1.z);
-		Ball ball1 = new Ball(vector1, world, 1, 1, 1, vector1.x, 0, vector1.z);
-		Ball ball2 = new Ball(vector2, world, 1, 1, 1, vector2.x, 0, vector2.z);
+		Object3D plane = Primitives.getPlane(20,10);
+		plane.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
+		world.addObject(plane);
 		
-		for(int i = 0; i < 5; i++) //In the ball class, delta is 5
+		SimpleVector startVector = plane.getOrigin();
+		startVector = new SimpleVector(startVector.x, startVector.y - 100, startVector.z);
+		Ball ball = new Ball(startVector, world, 1, 1, 1, 0, 0, 0);
+		world.addObject(ball.getSphere());
+		
+		SimpleVector curVector = ball.gravMove();
+		assertNotEquals(curVector, startVector);
+		
+		float pastHeight = startVector.y;
+		float curHeight = curVector.y;
+		int count = 1;
+		
+		while(curHeight > pastHeight)
 		{
-			System.out.println("count: "+i);
-			assertNotEquals(vector1, vector2);
-			
-			ball1.gravMove();
-			vector1 = ball1.getVector();
-			assertNotEquals(vector1, vector2);
-			
-			ball2.gravMove();
-			vector2 = ball2.getVector();
+			pastHeight = curHeight;
+			curVector = ball.gravMove();
+			curHeight = curVector.y;
+			count++;
 		}
-
-		assertNotEquals(vector1, vector2);	//Collision should have occurred
-	}
-	
-	@Test
-	public void characterTest()
-	{
 		
+		for(int i = 0; i < count*5; i++)
+		{
+			pastHeight = curHeight;
+			curVector = ball.gravMove();
+			curHeight = curVector.y;
+		}
+		
+		assertTrue(curHeight > pastHeight);
 	}
 }
