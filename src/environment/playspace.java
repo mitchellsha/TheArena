@@ -1,8 +1,12 @@
 package environment;
+import javax.swing.JFrame;
+
 import com.threed.jpct.*;
+import com.threed.jpct.util.KeyMapper;
+
 import shapes.Character;
 
-public class Playspace {
+public class Playspace extends JFrame{
 	
 	public Playspace(){
 		World world = new World();
