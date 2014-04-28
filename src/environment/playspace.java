@@ -3,9 +3,11 @@ package environment;
 import javax.swing.*;
 
 import shapes.Ball;
+import shapes.BallList;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 import com.threed.jpct.*;
@@ -17,15 +19,19 @@ public class Playspace extends JFrame {
 	private KeyMapper keyMapper = null;
 	private FrameBuffer fb = null;
 	private World world = null;
-	public Object3D plane = null;
-	private Object3D plane2 = null;
-	private Object3D plane3 = null;
-	private Object3D plane4 = null;
-	private Object3D plane5 = null;
+	public Object3D floor = null;
+	private Object3D rightWall = null;
+	private Object3D leftWall = null;
+	private Object3D farWall = null;
+	private Object3D closeWall = null;
 	private boolean doloop = true;
 	private Player player;
 	private ArrayList<Ball> Balls, BallsToRemove;
+	private HashMap<Integer, String> WallIDs;
 	private int tickRateMS;
+	private BallList ballList;
+	private TextureManager tm;
+
 
 	public Playspace() {
 
@@ -48,59 +54,81 @@ public class Playspace extends JFrame {
 		tickRateMS = 1;
 		Balls = new ArrayList<Ball>();
 		BallsToRemove = new ArrayList<Ball>();
+		WallIDs = new HashMap<Integer,String>();
+		ballList = new BallList();
 
 	}
 
 	private void initializeWorld() {
+		tm = TextureManager.getInstance();
+		tm.addTexture("gift", new Texture("src/gift.jpg"));
+		tm.addTexture("chevron", new Texture("src/chevron.jpg"));
+		tm.addTexture("rubber ball", new Texture("src/rubberball.jpg"));
+		tm.addTexture("basketball", new Texture("src/basketball.jpg"));
+		tm.addTexture("wood floor", new Texture("src/woodfloor.jpg"));
+		tm.addTexture("space", new Texture("src/space.jpg"));
+		
 		fb = new FrameBuffer(1024, 768, FrameBuffer.SAMPLINGMODE_NORMAL);
 		keyMapper = new KeyMapper(this);
 		fb.enableRenderer(IRenderer.RENDERER_SOFTWARE);
 
-		world = new World();
+		world = new World();		
+		floor = Primitives.getPlane(20, 10);
+		floor.rotateX((float) Math.PI / 2f);
+		floor.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
+		giveTexture(floor, "wood floor");
+		world.addObject(floor);
 
-		plane = Primitives.getPlane(20, 10);
-		plane.rotateX((float) Math.PI / 2f);
-		plane.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
-		world.addObject(plane);
+		rightWall = Primitives.getPlane(20,10);
+		rightWall.rotateY((float) Math.PI / 2f);
+		rightWall.rotateX((float) Math.PI / 2f);
+		rightWall.translate(new SimpleVector(100,-100,0));
+		rightWall.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
+		giveTexture(rightWall, "space");
+		world.addObject(rightWall);
 
-		plane2 = Primitives.getPlane(20,10);
-		plane2.rotateY((float) Math.PI / 2f);
-		plane2.translate(new SimpleVector(100,-100,0));
-		plane2.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
-		world.addObject(plane2);
+		leftWall = Primitives.getPlane(20,10);
+		leftWall.rotateY((float) -Math.PI / 2f);
+		rightWall.rotateX((float) -Math.PI / 2f);
+		leftWall.translate(new SimpleVector(-100, -100, 0));
+		leftWall.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
+		giveTexture(leftWall, "space");
+		world.addObject(leftWall);
 
-		plane3 = Primitives.getPlane(20,10);
-		plane3.rotateY((float) -Math.PI / 2f);
-		plane3.translate(new SimpleVector(-100, -100, 0));
-		plane3.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
-		world.addObject(plane3);
+		farWall = Primitives.getPlane(20, 10);
+		farWall.rotateZ((float) Math.PI / 2f);
+		farWall.translate(new SimpleVector(0,-100,100));
+		farWall.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
+		giveTexture(farWall, "space");
+		world.addObject(farWall);
 
-		plane4 = Primitives.getPlane(20, 10);
-		plane4.rotateZ((float) Math.PI / 2f);
-		plane4.translate(new SimpleVector(0,-100,100));
-		plane4.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
-		world.addObject(plane4);
-
-		plane5 = Primitives.getPlane(20, 10);
-		plane5.rotateY((float) Math.toRadians(180));
-		plane5.translate(new SimpleVector(0,-100,-100));
-		plane5.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
-		world.addObject(plane5);
-
-		player = new Player(world, keyMapper, plane, Balls);
+		closeWall = Primitives.getPlane(20, 10);
+		closeWall.rotateY((float) Math.toRadians(180));
+		closeWall.translate(new SimpleVector(0,-100,-100));
+		closeWall.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
+		giveTexture(closeWall, "space");
+		world.addObject(closeWall);
+		Random r = new Random();
+//		SimpleVector randomVector = new SimpleVector(0,-130,0);
+//		Ball newBall = new Ball(randomVector, WallIDs, ballList, 10, 2, tickRateMS,0, 0,0);
+//		createBallInWorld(newBall);
+//		SimpleVector randomVector2 = new SimpleVector(0,-50,0);
+//		Ball newBall2 = new Ball(randomVector2, WallIDs, ballList, 10, 2, tickRateMS,0, 0,0);
+//		createBallInWorld(newBall2);
+		
+		player = new Player(world, keyMapper, floor, Balls);
 
 		Light light = new Light(world);
 		light.setPosition(new SimpleVector(0, -80, 0));
 		light.setIntensity(140, 120, 120);
 		light.setAttenuation(-1);
 		world.setAmbientLight(20, 20, 20);
-
+		populateWallIds();
 		world.buildAllObjects();
 	}
 
-
 	private void startGame() {
-
+		
 		Camera cam = world.getCamera();
 		cam.moveCamera(Camera.CAMERA_MOVEOUT, 100);
 		cam.moveCamera(Camera.CAMERA_MOVEUP, 100);
@@ -115,13 +143,12 @@ public class Playspace extends JFrame {
 			cam.align(player.getObject());
 
 			cam.rotateCameraX((float) Math.toRadians(30));
-			cam.moveCamera(Camera.CAMERA_MOVEOUT, 100);
+			cam.moveCamera(Camera.CAMERA_MOVEOUT, 300);
 
-			
 			int randInt = r.nextInt(50);
 			if(randInt == 4){
 				SimpleVector randomVector = new SimpleVector(0, -Math.random()*(130-50), 0);
-				Ball newBall = new Ball(randomVector, world, 10, 2, tickRateMS,r.nextInt(30), r.nextInt(30),r.nextInt(30));
+				Ball newBall = new Ball(randomVector, WallIDs, ballList, 10, 2, tickRateMS,r.nextInt(30), r.nextInt(30),r.nextInt(30));
 				createBallInWorld(newBall);
 			}
 			long ticks = ticker.getTicks();
@@ -129,7 +156,9 @@ public class Playspace extends JFrame {
 			if (ticks > 0) {
 				if(Balls.size()>0){
 					for(Ball b:Balls){
-						SimpleVector howMuchBallMoved = b.gravMove();
+						b.gravMove();
+						b.updateBallList(ballList);
+						//System.out.println("The ball with id: " + b.getID() + " has a size of " + b.getBallList().size());
 						if(b.getVector().y>belowFloor){
 							BallsToRemove.add(b);
 						}
@@ -158,7 +187,33 @@ public class Playspace extends JFrame {
 		ball.build();
 		ball.getSphere().build();
 		//world.addObject(ball);
+		ball.getSphere().setTexture("basketball");
+		ball.getSphere().calcTextureWrap();
+		ball.getSphere().setAdditionalColor(Color.orange);
+		ball.getSphere().compileAndStrip();
 		world.addObject(ball.getSphere());
+		System.out.println("added the ball id " + ball.getID() + " to ball list");
+		ballList.addToBallList(ball.getID());
+		System.out.println(ballList.get(ballList.size()-1));
+	}
+	
+	public void giveTexture(Object3D object, String texname) {
+		object.setTexture(texname);
+		//object.calcTextureWrap();
+		object.setLighting(Object3D.LIGHTING_ALL_ENABLED);
+		object.setSpecularLighting(true);
+		object.setAdditionalColor(Color.gray);
+		object.compileAndStrip();
+	}
+	
+	public void populateWallIds(){
+		System.out.println(floor.getID()+" " +rightWall.getID()+" " +leftWall.getID()+" " +farWall.getID()+" " +closeWall.getID());
+		WallIDs.put(floor.getID(),"Bottom");
+		WallIDs.put(rightWall.getID(),"Right");
+		WallIDs.put(leftWall.getID(),"Left");
+		WallIDs.put(farWall.getID(),"Far");
+		WallIDs.put(closeWall.getID(),"Close");
+
 	}
 
 	public void lockCheck(){

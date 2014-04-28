@@ -88,7 +88,7 @@ public class Player {
 		cone.translate(moveRes);
 		SimpleVector t = new SimpleVector(0, 1, 0);
 		t = cone.checkForCollisionEllipsoid(t, ellipsoid, 1);
-		
+
 		cone.translate(t);
 
 		// damping
@@ -126,5 +126,3 @@ public class Player {
 		}
 	}
 }
-
-
