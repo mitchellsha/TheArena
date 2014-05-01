@@ -25,7 +25,8 @@ public class Playspace extends JFrame {
 	private Object3D farWall = null;
 	private Object3D closeWall = null;
 	private boolean doloop = true;
-	private Player player;
+//	private Player player;
+	private PlayerAnimated player;
 	private ArrayList<Ball> Balls, BallsToRemove;
 	private HashMap<Integer, String> WallIDs;
 	private int tickRateMS;
@@ -116,7 +117,8 @@ public class Playspace extends JFrame {
 //		Ball newBall2 = new Ball(randomVector2, WallIDs, ballList, 10, 2, tickRateMS,0, 0,0);
 //		createBallInWorld(newBall2);
 		
-		player = new Player(world, keyMapper, floor, Balls);
+//		player = new Player(world, keyMapper, floor, Balls);
+		player = new PlayerAnimated(world, keyMapper, floor, Balls);
 
 		Light light = new Light(world);
 		light.setPosition(new SimpleVector(0, -80, 0));

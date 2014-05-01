@@ -33,6 +33,7 @@ public class TheArenaTests
 		long stop = ticker.getTime();
 		
 		while(stop-start < rate*ticks)
+			System.out.println(stop-start);
 			stop = ticker.getTime();
 		
 		assertTrue(ticker.getTicks() >= ticks);
