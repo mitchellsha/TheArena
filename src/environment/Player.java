@@ -1,14 +1,7 @@
 package environment;
 
-import javax.swing.*;
-
-import shapes.Ball;
 import shapes.BallList;
-
-import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-
 import com.threed.jpct.*;
 import com.threed.jpct.util.*;
 
@@ -24,8 +17,8 @@ public class Player {
 	private Object3D model;
 	private static final float SCALE = 0.2f;
 	private static final float DAMPING = 0.1f;
-	private static final float SPEED = 2f;
-	private static final float MAXSPEED = 3f;
+	private static final float SPEED = 3f;
+	private static final float MAXSPEED = 6f;
 	private BallList ballslist;
 	float ind = 0;
 	private int animKey = 2;//do a walk animation
@@ -80,11 +73,11 @@ public class Player {
 			}
 
 			if (left) {
-				model.rotateY((float) Math.toRadians(-4));
+				model.rotateY((float) Math.toRadians(-5));
 			}
 
 			if (right) {
-				model.rotateY((float) Math.toRadians(4));
+				model.rotateY((float) Math.toRadians(5));
 			}
 
 			if (moveRes.length() > MAXSPEED) {
@@ -167,7 +160,6 @@ public class Player {
 		public void collision(CollisionEvent c1) {
 			for (Object3D o: c1.getTargets()) {
 				if (ballslist.contains(o.getID()-1)) {
-					System.out.println("you're dead.");
 					alive = false;
 				}
 			}

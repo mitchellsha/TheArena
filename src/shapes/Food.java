@@ -1,16 +1,12 @@
 package shapes;
 
-import java.awt.Color;
-
 import com.threed.jpct.CollisionEvent;
 import com.threed.jpct.CollisionListener;
 import com.threed.jpct.Object3D;
 import com.threed.jpct.Primitives;
 import com.threed.jpct.SimpleVector;
-import com.threed.jpct.TextureManager;
 import com.threed.jpct.World;
 
-import environment.Player;
 
 @SuppressWarnings("serial")
 public class Food extends Object3D implements CollisionListener {
@@ -48,7 +44,7 @@ public class Food extends Object3D implements CollisionListener {
 			float randX = (float)Math.random()*range;
 			float randZ = (float)Math.random()*range;
 			food.setOrigin(new SimpleVector(randX, Y, randZ));
-			pointsTally +=5;
+			pointsTally +=1;
 		}
 	}
 

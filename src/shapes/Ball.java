@@ -14,20 +14,17 @@ import com.threed.jpct.World;
 
 public class Ball extends Object3D implements CollisionListener{
 	private SimpleVector ballPosition, ballVelocity;
-	//private float ballVelocity.x, velocityY, velocityZ; //simple vector
 	private final double g = 9.8;
 	float ballScale;
 	private Object3D myBall;
 	private double delta;
-	private int countCollisionX, countCollisionY, countCollisionZ, ballCounter = 0; //own class
+	private int countCollisionX, countCollisionY, countCollisionZ, ballCounter = 0;
 	private int countCollisionLeft, countCollisionFar = 0;
 	private double size;
 	private HashMap<Integer, String> wallIDs;
 	private BallList ballList;
 	private boolean vectorChange = false;
 	private double vx1, vy1, vz1, vx2, vy2, vz2;
-	private Ball prevBallHit = null;
-	private Ball curBallHit;
 	private boolean alreadyHit;
 	private float velocityDecay;
 	private boolean locked = false;
@@ -72,7 +69,7 @@ public class Ball extends Object3D implements CollisionListener{
 	}
 	
 	private void rightWallCollision(){
-		countCollisionX++;
+		countCollisionLeft++;
 		if(countCollisionX==1){
 			ballVelocity.x = -ballVelocity.x;
 			countCollisionY=0;
@@ -139,7 +136,7 @@ public class Ball extends Object3D implements CollisionListener{
 	}
 	
 	private void farWallCollision(){
-		countCollisionZ++;
+		countCollisionFar++;
 		if(countCollisionZ==1){
 			ballVelocity.z = -ballVelocity.z;
 			countCollisionX=0;
@@ -189,7 +186,6 @@ public class Ball extends Object3D implements CollisionListener{
 			decayVelocity(other);
 		}
 		locked = false;
-
 	}
 
 	private float getYPrime(Ball other, float vx1p, float vz1p){
@@ -229,7 +225,6 @@ private float getZPrimeOther(Ball other, float vx1p, float vz1p){
 	
 	public void lockCheck(Ball first, Ball second){
 		
-		Set<Integer> ballSet = ballList.keySet();
 		Ball firstBall = first;
 		Ball secondBall = second;
 		double firstXPos = (double) firstBall.ballPosition.x;
@@ -240,12 +235,10 @@ private float getZPrimeOther(Ball other, float vx1p, float vz1p){
 		double secondZPos = (double) secondBall.ballPosition.z;
 
 		double distance = Math.sqrt(Math.pow(firstXPos-secondXPos,2) + Math.pow(firstYPos-secondYPos,2) + Math.pow(firstZPos-secondZPos,2));
-		System.out.println("distance: " + distance + "with the sum: " + (firstBall.getSize()*2 + secondBall.getSize()*2));
 		
 		if(distance <= (firstBall.getSize() + secondBall.getSize())){
 			ballCounter++;
 			if(ballCounter>2){
-				System.out.println("two balls are oscillating together");
 				ballCounter=0;
 				locked = true;
 			}
@@ -291,8 +284,6 @@ private float getZPrimeOther(Ball other, float vx1p, float vz1p){
 			else{
 				if(!hasBallBeenHit(ballList.get(obj.getID()))||!hasBallBeenHit(ballList.get(target.getID()))){
 					if(ballList.contains(target.getID()-1)&&ballList.contains(obj.getID()-1)){
-						System.out.println("collision");
-						System.out.println(target.getID() + " and " + obj.getID());
 						ballCollisionMove(ballList.get(target.getID()-1));
 						setBallToHit(ballList.get(obj.getID()-1));
 						setBallToHit(ballList.get(target.getID()-1));
@@ -304,7 +295,6 @@ private float getZPrimeOther(Ball other, float vx1p, float vz1p){
 
 	@Override
 	public boolean requiresPolygonIDs() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	

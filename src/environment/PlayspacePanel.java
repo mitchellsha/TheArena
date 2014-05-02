@@ -1,5 +1,6 @@
 package environment;
 
+import javax.print.attribute.standard.Media;
 import javax.swing.*;
 
 import shapes.Ball;
@@ -12,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+
 
 import com.threed.jpct.*;
 import com.threed.jpct.util.*;
@@ -34,10 +36,11 @@ public class PlayspacePanel extends JPanel {
 	private Food food;
 	private Camera cam;
 	boolean up = false, down = false, left = false, right = false;
+	private Frame frame;
 
-
-	public PlayspacePanel(KeyMapper k) {
-		keyMapper = k;
+	public PlayspacePanel(Frame f) {
+		frame = f;
+		keyMapper = new KeyMapper(frame);
 		int numberOfProcs = Runtime.getRuntime().availableProcessors();
 
 		Config.useMultipleThreads = numberOfProcs > 1;
@@ -46,7 +49,6 @@ public class PlayspacePanel extends JPanel {
 		Config.maxNumberOfCores = numberOfProcs;
 		Config.lightMul = 1;
 		Config.mtDebug = true;
-
 		tickRateMS = 10;
 		Balls = new ArrayList<Ball>();
 		BallsToRemove = new ArrayList<Ball>();
@@ -62,7 +64,7 @@ public class PlayspacePanel extends JPanel {
 		tm = TextureManager.getInstance();
 		tm.addTexture("gift", new Texture("src/gift.jpg"));
 		tm.addTexture("chevron", new Texture("src/chevron.jpg"));
-		tm.addTexture("rubber ball", new Texture("src/rubberball.jpg"));
+//		tm.addTexture("rubber ball", new Texture("src/rubberball.jpg"));
 		tm.addTexture("basketball", new Texture("src/basketball.jpg"));
 		tm.addTexture("wood floor", new Texture("src/woodfloor.jpg"));
 		tm.addTexture("space", new Texture("src/space.jpg"));
@@ -110,8 +112,8 @@ public class PlayspacePanel extends JPanel {
 		world.addObject(closeWall);
 
 		player = new Player(world, keyMapper, ballList);
-
-		food = new Food(new SimpleVector(0,-5,0), world, 10, 3, player.getObject().getID());
+		SimpleVector randomFoodVector = new SimpleVector(30,-5,30);
+		food = new Food(randomFoodVector, world, 10, 3, player.getObject().getID());
 		giveTexture(food.getObject(), "chevron");
 		food.getObject().setAdditionalColor(Color.RED);
 		food.getObject().setTransparency(0);
@@ -137,31 +139,39 @@ public class PlayspacePanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			food.rotate();
-			int randInt = rand.nextInt(50);
+			if(player.getAlive()){
+				frame.setScoreToUser(food.getPoints());
+				food.rotate();
+				int randInt = rand.nextInt(25);
 
-			if(randInt == 4){
-				SimpleVector randomVector = new SimpleVector(0, -Math.random()*(130-50), 0);
-				Ball newBall = new Ball(randomVector, WallIDs, ballList, 10, 4, tickRateMS,rand.nextInt(30), rand.nextInt(30),rand.nextInt(30));
-				createBallInWorld(newBall);
-			}
-
-			BallsToRemove = new ArrayList<Ball>();
-			if(Balls.size()>0){
-				for(Ball b:Balls){
-					b.gravMove();
-					b.updateBallList(ballList);
-					if(b.getVector().y>0){
-						BallsToRemove.add(b);
+				if(randInt == 4){
+					if(!(Balls.size()>15)){
+						SimpleVector randomVector = new SimpleVector(0, -Math.random()*(130-50), 0);
+						Ball newBall = new Ball(randomVector, WallIDs, ballList, 10, 4, tickRateMS,rand.nextInt(30), rand.nextInt(30),rand.nextInt(30));
+						createBallInWorld(newBall);
 					}
 				}
-				for(Ball d:BallsToRemove){
-					Balls.remove(d);
-					world.removeObject(d.getSphere());
+
+				BallsToRemove = new ArrayList<Ball>();
+				if(Balls.size()>0){
+					for(Ball b:Balls){
+						b.gravMove();
+						b.updateBallList(ballList);
+						if(b.getVector().y>0){
+							BallsToRemove.add(b);
+						}
+					}
+					for(Ball d:BallsToRemove){
+						Balls.remove(d);
+						world.removeObject(d.getSphere());
+					}
 				}
+				move();
+				draw();
 			}
-			move();
-			draw();
+			else{
+				createEndOfGame();
+			}
 		}
 	}
 
@@ -173,6 +183,12 @@ public class PlayspacePanel extends JPanel {
 		repaint();
 	}
 
+
+	private void createEndOfGame(){
+		JOptionPane.showMessageDialog(null, "You're dead. Your score was: "+ food.getPoints()+"\nThanks for playing!");
+		System.exit(0);
+	}
+	
 	@Override
 	public void paintComponent(Graphics g) {
 		fb.display(g);
@@ -214,5 +230,9 @@ public class PlayspacePanel extends JPanel {
 		cam.rotateCameraX((float) Math.toRadians(30));
 		cam.moveCamera(Camera.CAMERA_MOVEOUT, 175);
 		player.move(keyMapper);
+	}
+	
+	public int getScore(){
+		return food.getPoints();
 	}
 }
