@@ -50,11 +50,11 @@ public class Frame extends JFrame {
 		score.setText("SCORE: " + point);
 	}
 	
+	
 	public static void main(String[] args0) {
 		Frame frame = new Frame();
 		frame.startGame();
 		frame.setVisible(true);
 		sound.playSound("src/environment/SpaceJam.au");
-
 	}
 }

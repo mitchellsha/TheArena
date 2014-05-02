@@ -33,7 +33,7 @@ public class Player {
 //		model = Primitives.getCone(2);
 		model = loadModel("src/res/figure.3ds", SCALE);
 		
-		model.translate(-50, -50, -50);
+		model.translate(-50, 0, -50);
 		model.setCollisionMode(Object3D.COLLISION_CHECK_SELF|Object3D.COLLISION_CHECK_OTHERS);
 		model.addCollisionListener(new collision());
 		createAnimation();

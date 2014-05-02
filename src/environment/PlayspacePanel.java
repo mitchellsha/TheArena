@@ -1,6 +1,5 @@
 package environment;
 
-import javax.print.attribute.standard.Media;
 import javax.swing.*;
 
 import shapes.Ball;
@@ -37,6 +36,8 @@ public class PlayspacePanel extends JPanel {
 	private Camera cam;
 	boolean up = false, down = false, left = false, right = false;
 	private Frame frame;
+	private Projector projector;
+	private ShadowHelper sh = null;
 
 	public PlayspacePanel(Frame f) {
 		frame = f;
@@ -64,7 +65,7 @@ public class PlayspacePanel extends JPanel {
 		tm = TextureManager.getInstance();
 		tm.addTexture("gift", new Texture("src/gift.jpg"));
 		tm.addTexture("chevron", new Texture("src/chevron.jpg"));
-//		tm.addTexture("rubber ball", new Texture("src/rubberball.jpg"));
+		tm.addTexture("rubber ball", new Texture("src/rubberball.jpg"));
 		tm.addTexture("basketball", new Texture("src/basketball.jpg"));
 		tm.addTexture("wood floor", new Texture("src/woodfloor.jpg"));
 		tm.addTexture("space", new Texture("src/space.jpg"));
@@ -124,7 +125,23 @@ public class PlayspacePanel extends JPanel {
 		light.setAttenuation(-1);
 		world.setAmbientLight(20, 20, 20);
 		populateWallIds();
+		initializeShadows();
 		world.buildAllObjects();
+	}
+	
+	private void initializeShadows(){
+		projector = new Projector();
+		projector.setFOV(1.5f);
+		projector.setYFOV(1.5f);
+
+		sh = new ShadowHelper(world, fb, projector, 2048);
+		sh.setCullingMode(false);
+		sh.setAmbientLight(new Color(20,20,20));
+		sh.setLightMode(true);
+		sh.setBorder(1);
+
+		sh.addReceiver(floor);
+
 	}
 
 	private void startGame() {
@@ -172,6 +189,8 @@ public class PlayspacePanel extends JPanel {
 			else{
 				createEndOfGame();
 			}
+			sh.updateShadowMap();
+
 		}
 	}
 
@@ -204,6 +223,7 @@ public class PlayspacePanel extends JPanel {
 		ball.getSphere().compileAndStrip();
 		world.addObject(ball.getSphere());
 		ballList.addToBallList(ball.getID(), ball);
+		sh.addCaster(ball);
 	}
 
 	public void giveTexture(Object3D object, String texname) {

@@ -18,6 +18,7 @@ public class Food extends Object3D implements CollisionListener {
 	private int range;
 	private float Y;
 	private int pointsTally;
+	private boolean sign = false;
 	
 	public Food(SimpleVector vector, World world, int resolution, float scale, int playerID) {
 		super(resolution);
@@ -41,9 +42,20 @@ public class Food extends Object3D implements CollisionListener {
 		// TODO Auto-generated method stub
 		Object3D obj = ce.getSource();
 		if (obj.getID() == playerID) {
-			float randX = (float)Math.random()*range;
-			float randZ = (float)Math.random()*range;
-			food.setOrigin(new SimpleVector(randX, Y, randZ));
+			if(sign){
+				float randX = (float) Math.random()*range;
+				float randZ = (float) Math.random()*range;
+				sign = false;
+				food.setOrigin(new SimpleVector(randX, Y, randZ));
+
+
+			}
+			else{
+				float randX = (float) -Math.random()*range;
+				float randZ = (float) -Math.random()*range;
+				sign = true;
+				food.setOrigin(new SimpleVector(randX, Y, randZ));
+			}
 			pointsTally +=1;
 		}
 	}
