@@ -63,9 +63,7 @@ public class PlayspacePanel extends JPanel {
 
 	private void initializeWorld() {
 		tm = TextureManager.getInstance();
-		tm.addTexture("gift", new Texture("src/gift.jpg"));
 		tm.addTexture("chevron", new Texture("src/chevron.jpg"));
-		tm.addTexture("rubber ball", new Texture("src/rubberball.jpg"));
 		tm.addTexture("basketball", new Texture("src/basketball.jpg"));
 		tm.addTexture("wood floor", new Texture("src/woodfloor.jpg"));
 		tm.addTexture("space", new Texture("src/space.jpg"));
