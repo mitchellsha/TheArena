@@ -1,9 +1,12 @@
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import shapes.Ball;
+import shapes.BallList;
 
 import com.threed.jpct.Object3D;
 import com.threed.jpct.Primitives;
@@ -16,11 +19,15 @@ import environment.Ticker;
 public class TheArenaTests
 {	
 	private World world;
+	private BallList bList;
+	private HashMap<Integer, String> WallIDs;
 	
 	@Before
 	public void setup()
 	{
 		world = new World();
+		bList = new BallList();
+		WallIDs = new HashMap<Integer,String>();
 	}
 	
 	@Test
@@ -43,7 +50,7 @@ public class TheArenaTests
 	public void abstractionTest()
 	{
 		SimpleVector startVector = SimpleVector.ORIGIN;
-		Ball ball = new Ball(startVector, world, 1, 1, 1, 0, 0, 0);
+		Ball ball = new Ball(startVector, null, world, 1, 1, 1, 0, 0, 0);
 		world.addObject(ball.getSphere());
 		assertEquals(startVector, ball.getVector());
 		assertFalse(startVector == ball.getVector());
